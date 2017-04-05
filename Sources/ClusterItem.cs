@@ -18,7 +18,7 @@ namespace ClusteringGoogleMap
         }
 
         public ClusterItem(IntPtr handle, Android.Runtime.JniHandleOwnership transfer)
-        : base(handle, transfer)
+            : base(handle, transfer)
         {//To avoid Leaky abstraction.... http://stackoverflow.com/questions/10593022/monodroid-error-when-calling-constructor-of-custom-view-twodscrollview/10603714#10603714
         }
     }

@@ -19,9 +19,10 @@ namespace ClusteringGoogleMap
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            SupportActionBar.Hide();
 
             // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.Main);
+            SetContentView(Resource.Layout.MainActivity);
             m_mapView = FindViewById<MapView>(Resource.Id.mainactivity_mapView);
 
             m_mapView.OnCreate(bundle);
@@ -32,10 +33,10 @@ namespace ClusteringGoogleMap
         {
             m_map = map;
 
+            //Initialize cluster manager. Setting the CameraIdleListener is mandatory 
             m_ClusterManager = new ClusterManager(this, m_map);
+            m_ClusterManager.Renderer = new ClusterRenderer(this, m_map, m_ClusterManager);
             m_map.SetOnCameraIdleListener(m_ClusterManager);
-            m_map.SetOnMarkerClickListener(m_ClusterManager);
-            m_map.SetOnInfoWindowClickListener(m_ClusterManager);
 
             SetupMap();
         }
@@ -48,17 +49,18 @@ namespace ClusteringGoogleMap
 
             List<ClusterItem> lsMarkers = new List<ClusterItem>();
 
-            //Add 50 markers using a spiral algorithm
+            //Add 50 markers using a spiral algorithm (cheers SushiHangover)
             for (int i = 0; i < 50; ++i)
             {
-                double t = i * Math.PI * 0.33f;
-                double r = 0.005 * Math.Exp(0.1 * t);
-                double x = r * Math.Cos(t);
-                double y = r * Math.Sin(t);
+                double theta = i * Math.PI * 0.33f;
+                double radius = 0.005 * Math.Exp(0.1 * theta);
+                double x = radius * Math.Cos(theta);
+                double y = radius * Math.Sin(theta);
                 ClusterItem newMarker = new ClusterItem(LatLonGrenoble.Latitude + x, LatLonGrenoble.Longitude + y);
                 lsMarkers.Add(newMarker);
             }
 
+            //Add markers to the map through the cluster manager
             m_ClusterManager.AddItems(lsMarkers);
         }
 
