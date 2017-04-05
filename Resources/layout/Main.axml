@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mainactivity_mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        map:cameraZoom="@integer/default_zoom_level_googlemaps"
+        map:mapType="normal"
+        map:liteMode="false"
+        map:uiZoomControls="true"
+        map:uiZoomGestures="true"
+        map:uiCompass="true"
+        map:uiRotateGestures="true"
+        map:uiScrollGestures="true" />
+</LinearLayout>

@@ -3,3 +3,5 @@
 ################################################################################
 
 /bin/Debug
+/obj/Debug
+/ClusteringGoogleMap.csproj.user
