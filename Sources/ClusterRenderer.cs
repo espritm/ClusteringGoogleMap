@@ -69,7 +69,8 @@ namespace ClusteringGoogleMap
 
             ClusterItem clusterItem = (ClusterItem)item;
 
-            m_dicMarkerToClusterItem.Add(marker.Id, clusterItem);
+            if (!m_dicMarkerToClusterItem.ContainsKey(marker.Id))
+                m_dicMarkerToClusterItem.Add(marker.Id, clusterItem);
         }
     }
 }
