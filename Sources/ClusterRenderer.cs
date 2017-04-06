@@ -7,6 +7,8 @@ using Com.Google.Maps.Android.Clustering;
 using Com.Google.Maps.Android.UI;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
+using Java.Lang;
+using System.Collections.Generic;
 
 namespace ClusteringGoogleMap
 {
@@ -14,10 +16,12 @@ namespace ClusteringGoogleMap
     {
         private IconGenerator m_iconGeneratorForMarkerGroup;
         private ImageView m_imageviewForMarkerGroup;
+        public Dictionary<string, ClusterItem> m_dicMarkerToClusterItem;
 
         public ClusterRenderer(Activity context, GoogleMap map, ClusterManager clusterManager) 
             : base(context, map, clusterManager)
         {
+            m_dicMarkerToClusterItem = new Dictionary<string, ClusterItem>();
             InitViewForMarkerGroup(context);
         }
 
@@ -40,7 +44,8 @@ namespace ClusteringGoogleMap
             markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker));
 
             //Text for Info Window
-            markerOptions.SetTitle(markerOptions.Position.Latitude.ToString() + ", " + markerOptions.Position.Longitude.ToString());
+            markerOptions.SetTitle("Grenoble");
+            markerOptions.SetSnippet(markerOptions.Position.Latitude.ToString() + ", " + markerOptions.Position.Longitude.ToString());
         }
 
         //Draw a grouped marker
@@ -55,6 +60,16 @@ namespace ClusteringGoogleMap
             m_imageviewForMarkerGroup.SetImageResource(Resource.Drawable.marker_cluster_grouped);
             Bitmap icon = m_iconGeneratorForMarkerGroup.MakeIcon(sNumberOfMarkersGrouped);
             markerOptions.SetIcon(BitmapDescriptorFactory.FromBitmap(icon));
+        }
+
+        //After a cluster item have been rendered to a marker
+        protected override void OnClusterItemRendered(Object item, Marker marker)
+        {
+            base.OnClusterItemRendered(item, marker);
+
+            ClusterItem clusterItem = (ClusterItem)item;
+
+            m_dicMarkerToClusterItem.Add(marker.Id, clusterItem);
         }
     }
 }

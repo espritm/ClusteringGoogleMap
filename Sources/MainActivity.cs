@@ -1,21 +1,23 @@
-﻿using System;
-using Android.App;
+﻿using Android.App;
 using Android.OS;
 using Android.Gms.Maps;
 using Com.Google.Maps.Android.Clustering;
 using Android.Gms.Maps.Model;
 using System.Collections.Generic;
 using Android.Support.V7.App;
+using Android.Widget;
 
 namespace ClusteringGoogleMap
 {
     [Activity(Label = "@string/ApplicationName", MainLauncher = true, Icon = "@drawable/icon")]
-    public class MainActivity : AppCompatActivity, IOnMapReadyCallback
+    public class MainActivity : AppCompatActivity, IOnMapReadyCallback, ClusterManager.IOnClusterItemInfoWindowClickListener
     {
         private GoogleMap m_map;
         private MapView m_mapView;
         private ClusterManager m_ClusterManager;
-        
+        private ClusterRenderer m_ClusterRenderer;
+
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -35,10 +37,32 @@ namespace ClusteringGoogleMap
 
             //Initialize cluster manager. Setting the CameraIdleListener is mandatory 
             m_ClusterManager = new ClusterManager(this, m_map);
-            m_ClusterManager.Renderer = new ClusterRenderer(this, m_map, m_ClusterManager);
             m_map.SetOnCameraIdleListener(m_ClusterManager);
 
+            //Initialize cluster renderer, and keep a reference that will be usefull for the InfoWindowsAdapter
+            m_ClusterRenderer = new ClusterRenderer(this, m_map, m_ClusterManager);
+            m_ClusterManager.Renderer = m_ClusterRenderer;
+            
+            //Custom info window : single markers only (a click on a cluster marker should not show info window)
+            m_ClusterManager.MarkerCollection.SetOnInfoWindowAdapter(new CustomGoogleMapInfoWindow(this, m_ClusterRenderer));
+            m_map.SetInfoWindowAdapter(m_ClusterManager.MarkerManager);
+
+            //Handle Info Window's click event
+            m_map.SetOnInfoWindowClickListener(m_ClusterManager);
+            m_ClusterManager.SetOnClusterItemInfoWindowClickListener(this);
+
             SetupMap();
+        }
+
+        public void OnClusterItemInfoWindowClick(Java.Lang.Object p0)
+        {
+            //You can retrieve the ClusterItem clicked with a cast
+            ClusterItem itemClicked = (ClusterItem)p0;
+
+            Toast.MakeText(this, "Info Window clicked !", ToastLength.Short).Show();
+
+            //Dismiss the info window clicked
+            m_ClusterRenderer.GetMarker(itemClicked).HideInfoWindow();
         }
 
         private void SetupMap()
@@ -52,11 +76,11 @@ namespace ClusteringGoogleMap
             //Add 50 markers using a spiral algorithm (cheers SushiHangover)
             for (int i = 0; i < 50; ++i)
             {
-                double theta = i * Math.PI * 0.33f;
-                double radius = 0.005 * Math.Exp(0.1 * theta);
-                double x = radius * Math.Cos(theta);
-                double y = radius * Math.Sin(theta);
-                ClusterItem newMarker = new ClusterItem(LatLonGrenoble.Latitude + x, LatLonGrenoble.Longitude + y);
+                double theta = i * System.Math.PI * 0.33f;
+                double radius = 0.005 * System.Math.Exp(0.1 * theta);
+                double x = radius * System.Math.Cos(theta);
+                double y = radius * System.Math.Sin(theta);
+                ClusterItem newMarker = new ClusterItem(LatLonGrenoble.Latitude + x, LatLonGrenoble.Longitude + y, "radius = " + radius);
                 lsMarkers.Add(newMarker);
             }
 

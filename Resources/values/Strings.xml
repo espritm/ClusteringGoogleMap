@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ApplicationName">ClusteringGoogleMap</string>
+  <string name="CustomGoogleMapInfoWindow_button_like">J\'adore !</string>
 </resources>

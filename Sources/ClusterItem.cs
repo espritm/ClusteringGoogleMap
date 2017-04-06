@@ -9,12 +9,15 @@ namespace ClusteringGoogleMap
         public LatLng Position { get; set; }
         public string Snippet { get; set; }
         public string Title { get; set; }
+        public string m_sMoreCustomInformation { get; set; }
 
 
-        public ClusterItem(double lat, double lon)
+        public ClusterItem(double lat, double lon, string sMoreCustomInformation)
         {
             Position = new LatLng(lat, lon);
             Title = lat.ToString() + ", " + lon.ToString();
+
+            m_sMoreCustomInformation = sMoreCustomInformation;
         }
 
         public ClusterItem(IntPtr handle, Android.Runtime.JniHandleOwnership transfer)

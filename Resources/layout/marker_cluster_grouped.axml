@@ -7,7 +7,7 @@
         android:layout_width="@dimen/marker_cluster_grouped_imageview_size"
         android:layout_height="@dimen/marker_cluster_grouped_imageview_size" />
     <TextView
-        android:id="@id/amu_text" 
+        android:id="@id/amu_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
