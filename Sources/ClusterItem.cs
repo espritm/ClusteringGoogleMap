@@ -10,6 +10,7 @@ namespace ClusteringGoogleMap
         public string Snippet { get; set; }
         public string Title { get; set; }
         public string m_sMoreCustomInformation { get; set; }
+        public bool m_bIsFav { get; set; }
 
 
         public ClusterItem(double lat, double lon, string sMoreCustomInformation)

@@ -4,6 +4,7 @@ using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Views;
 using Android.Widget;
+using System.Collections.Generic;
 
 namespace ClusteringGoogleMap
 {
@@ -12,13 +13,13 @@ namespace ClusteringGoogleMap
         private Activity m_context;
         private View m_View;
         private Marker m_currentMarker;
-        private ClusterRenderer m_ClusterRenderer;
+        private Dictionary<string, ClusterItem> m_dicAllMarkerOnMap;
 
-        public CustomGoogleMapInfoWindow(Activity context, ClusterRenderer clusterRenderer)
+        public CustomGoogleMapInfoWindow(Activity context, Dictionary<string, ClusterItem> dicAllMarkerOnMap)
         {
             m_context = context;
             m_View = m_context.LayoutInflater.Inflate(Resource.Layout.CustomGoogleMapInfoWindow, null);
-            m_ClusterRenderer = clusterRenderer;
+            m_dicAllMarkerOnMap = dicAllMarkerOnMap;
         }
 
         public View GetInfoWindow(Marker marker)
@@ -36,7 +37,7 @@ namespace ClusteringGoogleMap
 
             //Retrieve the ClusterItem associated to the marker
             ClusterItem clusterItem = null;
-            m_ClusterRenderer.m_dicMarkerToClusterItem.TryGetValue(m_currentMarker.Id, out clusterItem);
+            m_dicAllMarkerOnMap.TryGetValue(m_currentMarker.Id, out clusterItem);
 
             ImageView imageview = m_View.FindViewById<ImageView>(Resource.Id.CustomGoogleMapInfoWindow_imageview);
             TextView textviewTitle = m_View.FindViewById<TextView>(Resource.Id.CustomGoogleMapInfoWindow_textview_title);
@@ -49,6 +50,9 @@ namespace ClusteringGoogleMap
             textviewTitle.Text = marker.Title;
 
             textviewDescription.Text = marker.Snippet;
+
+            if (clusterItem.m_bIsFav)
+                textviewDescription.Text += "\nFavoris !";
 
             if (clusterItem != null)
                 textviewDescription.Text += "\nMore info : " + clusterItem.m_sMoreCustomInformation;

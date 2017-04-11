@@ -16,12 +16,12 @@ namespace ClusteringGoogleMap
     {
         private IconGenerator m_iconGeneratorForMarkerGroup;
         private ImageView m_imageviewForMarkerGroup;
-        public Dictionary<string, ClusterItem> m_dicMarkerToClusterItem;
+        public Dictionary<string, ClusterItem> m_dicAllMarkerOnMap;
 
-        public ClusterRenderer(Activity context, GoogleMap map, ClusterManager clusterManager) 
+        public ClusterRenderer(Activity context, GoogleMap map, ClusterManager clusterManager, Dictionary<string, ClusterItem> dicAllMarkerOnMap) 
             : base(context, map, clusterManager)
         {
-            m_dicMarkerToClusterItem = new Dictionary<string, ClusterItem>();
+            m_dicAllMarkerOnMap = dicAllMarkerOnMap;
             InitViewForMarkerGroup(context);
         }
 
@@ -40,8 +40,13 @@ namespace ClusteringGoogleMap
         //Draw a single marker
         protected override void OnBeforeClusterItemRendered(Java.Lang.Object p0, MarkerOptions markerOptions)
         {
+            ClusterItem clusterItem = (ClusterItem)p0;
+
             //Icon for single marker
-            markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker));
+            if (clusterItem.m_bIsFav)
+                markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_fav));
+            else
+                markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker));
 
             //Text for Info Window
             markerOptions.SetTitle("Grenoble");
@@ -51,13 +56,23 @@ namespace ClusteringGoogleMap
         //Draw a grouped marker
         protected override void OnBeforeClusterRendered(ICluster p0, MarkerOptions markerOptions)
         {
+            bool bIsFav = false;
+            foreach (ClusterItem itm in p0.Items)
+            {
+                bIsFav = itm.m_bIsFav;
+                break;
+            }
+
             //Retrieve the number we have to display inside the group marker
             string sNumberOfMarkersGrouped = p0.Size.ToString();
 
             //Icon of a group marker :
             //  First, set the imageview's source with the right picture
             //  Then, use the icon generator to set the icon of the marker with the text containing the number of markers grouped
-            m_imageviewForMarkerGroup.SetImageResource(Resource.Drawable.marker_cluster_grouped);
+            if (bIsFav)
+                m_imageviewForMarkerGroup.SetImageResource(Resource.Drawable.marker_cluster_grouped_fav);
+            else
+                m_imageviewForMarkerGroup.SetImageResource(Resource.Drawable.marker_cluster_grouped);
             Bitmap icon = m_iconGeneratorForMarkerGroup.MakeIcon(sNumberOfMarkersGrouped);
             markerOptions.SetIcon(BitmapDescriptorFactory.FromBitmap(icon));
         }
@@ -69,8 +84,8 @@ namespace ClusteringGoogleMap
 
             ClusterItem clusterItem = (ClusterItem)item;
 
-            if (!m_dicMarkerToClusterItem.ContainsKey(marker.Id))
-                m_dicMarkerToClusterItem.Add(marker.Id, clusterItem);
+            if (!m_dicAllMarkerOnMap.ContainsKey(marker.Id))
+                m_dicAllMarkerOnMap.Add(marker.Id, clusterItem);
         }
     }
 }
